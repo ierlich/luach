@@ -23,3 +23,6 @@ header{justify-content:flex-end;padding-bottom:6px}.compactToolbar{grid-template
 /* v10: reliable vertical gestures + Google status */
 .calendar{touch-action:none}
 .googleStatus{margin-top:12px;font-size:13px;color:var(--muted);font-weight:700}
+
+/* v11 layout */
+header{padding-top:12px}.navRow{width:100%;justify-content:space-between}.navSide,.monthArrows{display:flex;gap:8px}.monthArrows button{font-size:22px;min-width:42px;padding:7px 12px}.calendarTitle{text-align:center;font-size:16px;font-weight:800;color:var(--ink);padding:9px 4px 7px}.googleEvent{margin-top:3px;padding:2px 4px;border-radius:5px;background:#e7eef9;color:#34516f;font-size:9px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.moreEvents{font-size:9px;color:#58718a;font-weight:700;margin-top:2px}
