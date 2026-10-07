@@ -1,1 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#102d2a"/><circle cx="256" cy="256" r="145" fill="none" stroke="#d9bd7b" stroke-width="18"/><path d="M256 125l38 66 76 1-38 65 38 66-76 1-38 66-38-66-76-1 38-66-38-65 76-1z" fill="none" stroke="#fff" stroke-width="15"/><text x="256" y="282" text-anchor="middle" font-family="serif" font-size="82" fill="#fff">לוח</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<rect width="512" height="512" rx="112" fill="#102d2a"/>
+<rect x="106" y="112" width="300" height="294" rx="54" fill="#f7f3e8"/>
+<path d="M106 190h300" stroke="#d9bd7b" stroke-width="22"/>
+<path d="M176 86v82M336 86v82" stroke="#f7f3e8" stroke-width="28" stroke-linecap="round"/>
+<circle cx="256" cy="290" r="78" fill="#102d2a"/>
+<path d="M256 224l19 34 39 1-20 33 20 34-39 1-19 34-19-34-39-1 20-34-20-33 39-1z" fill="none" stroke="#d9bd7b" stroke-width="10" stroke-linejoin="round"/>
+<circle cx="256" cy="292" r="13" fill="#f7f3e8"/>
+</svg>
