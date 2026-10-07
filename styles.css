@@ -26,3 +26,10 @@ header{justify-content:flex-end;padding-bottom:6px}.compactToolbar{grid-template
 
 /* v11 layout */
 header{padding-top:12px}.navRow{width:100%;justify-content:space-between}.navSide,.monthArrows{display:flex;gap:8px}.monthArrows button{font-size:22px;min-width:42px;padding:7px 12px}.calendarTitle{text-align:center;font-size:16px;font-weight:800;color:var(--ink);padding:9px 4px 7px}.googleEvent{margin-top:3px;padding:2px 4px;border-radius:5px;background:#e7eef9;color:#34516f;font-size:9px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.moreEvents{font-size:9px;color:#58718a;font-weight:700;margin-top:2px}
+
+/* v9: keep the whole month at a fixed compact height even with calendar events */
+.grid{grid-auto-rows:minmax(0,1fr);height:min(68vh,720px)}
+.day{min-height:0!important;height:auto;overflow:hidden;display:flex;flex-direction:column}
+.holiday{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.day .gcal-event,.day .calendar-event,.day .event{white-space:normal;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;max-width:100%;line-height:1.15}
+@media(max-width:560px){.grid{height:calc(100dvh - 300px);min-height:420px;max-height:610px}.day{padding:5px 4px}.holiday{margin-top:3px;-webkit-line-clamp:2}}
