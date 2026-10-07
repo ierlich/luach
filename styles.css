@@ -19,3 +19,7 @@ header{justify-content:flex-end;padding-bottom:6px}.compactToolbar{grid-template
 /* v9: clearer calendar grid */
 .calendar{border-color:#c8c0af;border-width:1.5px}
 .day{border-top-color:#c8c0af;border-left-color:#c8c0af;border-top-width:1.5px;border-left-width:1.5px}
+
+/* v10: reliable vertical gestures + Google status */
+.calendar{touch-action:none}
+.googleStatus{margin-top:12px;font-size:13px;color:var(--muted);font-weight:700}
