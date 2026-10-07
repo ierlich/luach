@@ -33,3 +33,6 @@ header{padding-top:12px}.navRow{width:100%;justify-content:space-between}.navSid
 .holiday{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .day .gcal-event,.day .calendar-event,.day .event{white-space:normal;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;max-width:100%;line-height:1.15}
 @media(max-width:560px){.grid{height:calc(100dvh - 300px);min-height:420px;max-height:610px}.day{padding:5px 4px}.holiday{margin-top:3px;-webkit-line-clamp:2}}
+
+/* v12: use freed footer space for the month */
+@media(max-width:560px){main{padding-bottom:8px}.grid{height:calc(100dvh - 272px);min-height:445px;max-height:640px}}
