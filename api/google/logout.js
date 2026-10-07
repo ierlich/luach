@@ -1,0 +1,1 @@
+export default function handler(req,res){res.setHeader('Access-Control-Allow-Origin',process.env.APP_ORIGIN||'https://ierlich.github.io');res.setHeader('Access-Control-Allow-Credentials','true');res.setHeader('Set-Cookie','google_refresh=; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=0');res.status(204).end()}
