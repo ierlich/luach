@@ -1,9 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-<rect width="512" height="512" rx="112" fill="#102d2a"/>
-<rect x="106" y="112" width="300" height="294" rx="54" fill="#f7f3e8"/>
-<path d="M106 190h300" stroke="#d9bd7b" stroke-width="22"/>
-<path d="M176 86v82M336 86v82" stroke="#f7f3e8" stroke-width="28" stroke-linecap="round"/>
-<circle cx="256" cy="290" r="78" fill="#102d2a"/>
-<path d="M256 224l19 34 39 1-20 33 20 34-39 1-19 34-19-34-39-1 20-34-20-33 39-1z" fill="none" stroke="#d9bd7b" stroke-width="10" stroke-linejoin="round"/>
-<circle cx="256" cy="292" r="13" fill="#f7f3e8"/>
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#2b78bc"/><stop offset="1" stop-color="#123e78"/></linearGradient>
+ <linearGradient id="paper" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#ffffff"/><stop offset="1" stop-color="#e7f0fc"/></linearGradient>
+</defs>
+<rect width="512" height="512" rx="108" fill="url(#bg)"/>
+<rect x="77" y="105" width="358" height="326" rx="35" fill="#0c315d" opacity=".32"/>
+<rect x="68" y="95" width="358" height="326" rx="35" fill="url(#paper)"/>
+<path d="M103 95h288a35 35 0 0 1 35 35v55H68v-55a35 35 0 0 1 35-35z" fill="#188bd5"/>
+<rect x="141" y="66" width="32" height="76" rx="16" fill="#d4e4f3" stroke="#547c9f" stroke-width="7"/>
+<rect x="321" y="66" width="32" height="76" rx="16" fill="#d4e4f3" stroke="#547c9f" stroke-width="7"/>
+<g fill="#d4dfed">
+<rect x="102" y="219" width="55" height="47" rx="9"/><rect x="177" y="219" width="55" height="47" rx="9"/><rect x="252" y="219" width="55" height="47" rx="9"/><rect x="327" y="219" width="55" height="47" rx="9"/>
+<rect x="102" y="284" width="55" height="47" rx="9"/><rect x="177" y="284" width="55" height="47" rx="9"/><rect x="252" y="284" width="55" height="47" rx="9"/><rect x="327" y="284" width="55" height="47" rx="9"/>
+<rect x="102" y="349" width="55" height="40" rx="9"/><rect x="177" y="349" width="55" height="40" rx="9"/><rect x="252" y="349" width="55" height="40" rx="9"/><rect x="327" y="349" width="55" height="40" rx="9"/>
+</g>
+<rect x="252" y="284" width="55" height="47" rx="9" fill="#1c85d0"/>
+<rect x="177" y="349" width="55" height="40" rx="9" fill="#83baf0"/>
+<rect x="327" y="219" width="55" height="47" rx="9" fill="#83baf0"/>
 </svg>
