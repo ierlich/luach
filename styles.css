@@ -85,3 +85,14 @@ main{max-width:1000px;padding:0 3px 12px}
 .hero #todayGreg{font-size:15px;color:#eaf3ff;margin-top:7px;line-height:1.45;font-weight:600}
 .hero .todayInfo{font-size:12px;color:#eaf3ff;line-height:1.8;font-weight:600;border-right:1px solid #ffffff55;padding-right:15px}
 @media(max-width:560px){.hero{padding:13px 12px;border-radius:15px;margin:7px 3px 5px;gap:10px}.hero .bigHeb{font-size:22px}.hero #todayGreg{font-size:12px;margin-top:4px}.hero .todayInfo{font-size:10px;padding-right:9px;line-height:1.6}}
+
+/* Split month navigation and highlight Today without increasing header height */
+.navRow{display:grid;grid-template-columns:46px minmax(0,1fr) 46px;align-items:center;gap:8px;width:100%}
+.navRow .navSide{justify-content:center;align-items:center;gap:12px;min-width:0}
+.navRow .monthNav{width:46px;height:38px;padding:0;display:flex;align-items:center;justify-content:center;font-size:25px;font-weight:800}
+#prev{grid-column:1;grid-row:1} .navRow .navSide{grid-column:2;grid-row:1} #next{grid-column:3;grid-row:1}
+#todayBtn{min-width:106px;height:38px;padding:0 20px;background:#dceaff;border:1px solid #83addd;color:#164b83;font-size:16px;font-weight:800;box-shadow:0 2px 5px #235b8b1a}
+#menuBtn{height:38px;padding-top:0;padding-bottom:0}
+#useCurrentLocation{margin-top:10px;margin-bottom:8px}
+#useCurrentLocation:disabled{opacity:.65}
+@media(max-width:560px){.navRow{grid-template-columns:40px minmax(0,1fr) 40px;gap:4px}.navRow .monthNav{width:40px;height:36px}.navRow .navSide{gap:7px}#todayBtn{min-width:100px;height:36px;padding:0 13px}#menuBtn{height:36px;padding:0 10px}}
