@@ -36,3 +36,44 @@ header{padding-top:12px}.navRow{width:100%;justify-content:space-between}.navSid
 
 /* v12: use freed footer space for the month */
 @media(max-width:560px){main{padding-bottom:8px}.grid{height:calc(100dvh - 272px);min-height:445px;max-height:640px}}
+
+
+/* Compact month-grid redesign inspired by the reference calendar */
+:root{--ink:#292d32;--deep:#294f78;--paper:#f7f8fa;--card:#fff;--gold:#9a7546;--muted:#626b77;--line:#d2d4d8;--accent:#d8e7fc}
+body{background:#f7f8fa;color:var(--ink)}
+header{max-width:1000px;padding:10px 10px 3px}
+main{max-width:1000px;padding:0 3px 12px}
+.headerActions{gap:5px}
+.pill{background:#fff;border:1px solid #e3e5e8;border-radius:9px;box-shadow:none}
+.hero{border:0;border-bottom:1px solid #e1e3e6;border-radius:0;background:#fff;box-shadow:none;padding:7px 12px}
+.bigHeb{font-size:19px}
+.todayInfo{color:#65707c}
+.calendarTitle{font-size:21px;font-weight:800;padding:9px 4px 10px}
+.calendar{background:#d2d4d8;border:0;border-radius:0;overflow:hidden}
+.week{background:#f0f1f3;color:#5d6269;gap:1px}
+.week b{padding:9px 0;font-size:14px}
+.grid{gap:2px;background:#d2d4d8;height:min(74vh,830px)}
+.day{border:0!important;border-radius:3px;background:#fff;padding:6px 4px;overflow:hidden}
+.day.out{opacity:1;background:#eceef0;color:#9aa0a8}
+.day.out .gdate,.day.out .hdate{color:#9aa0a8}
+.day.today{background:#d8e7fc;outline:3px solid #4687bd;outline-offset:-3px}
+.day.selected-date{background:#f8e6bc;outline:3px solid #b78a43;outline-offset:-3px}
+.gdate{font-size:18px;font-weight:800;color:#383c42;text-align:right;line-height:1}
+.hdate{font-size:16px;font-weight:500;color:#3d434a;margin-top:auto;line-height:1.1;text-align:right}
+.holiday{font-size:11px;color:#9b4e3f;font-weight:700;margin-top:5px;line-height:1.15;max-width:100%;overflow:hidden}
+.googleEvent{background:#6266bf;color:#fff;font-size:10px;font-weight:600;border-radius:3px;margin-top:3px;padding:3px 2px;text-align:center}
+.moreEvents{color:#6266bf}
+@media(max-width:560px){
+ header{padding:8px 7px 2px}
+ main{padding:0 2px 6px}
+ .hero{padding:6px 8px}
+ .todayInfo{font-size:10px}
+ .calendarTitle{font-size:18px;padding:8px 2px}
+ .week b{font-size:12px;padding:8px 0}
+ .grid{height:calc(100dvh - 235px);min-height:460px;max-height:800px;gap:2px}
+ .day{padding:5px 2px}
+ .gdate{font-size:17px}
+ .hdate{font-size:15px}
+ .holiday{font-size:10px;margin-top:3px}
+ .googleEvent{font-size:9px;padding:2px 1px}
+}
