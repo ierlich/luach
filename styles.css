@@ -77,3 +77,11 @@ main{max-width:1000px;padding:0 3px 12px}
  .holiday{font-size:10px;margin-top:3px}
  .googleEvent{font-size:9px;padding:2px 1px}
 }
+
+
+/* Today's date: prominent, high-contrast header card */
+.hero{background:linear-gradient(125deg,#163c67 0%,#28629c 68%,#397ab1 100%);color:#fff;border:1px solid #275c91;border-radius:18px;padding:17px 18px;box-shadow:0 7px 18px #163c6733;gap:18px;margin:8px 4px 5px}
+.hero .bigHeb{font-size:clamp(23px,4vw,31px);font-weight:900;line-height:1.25;color:#fff}
+.hero #todayGreg{font-size:15px;color:#eaf3ff;margin-top:7px;line-height:1.45;font-weight:600}
+.hero .todayInfo{font-size:12px;color:#eaf3ff;line-height:1.8;font-weight:600;border-right:1px solid #ffffff55;padding-right:15px}
+@media(max-width:560px){.hero{padding:13px 12px;border-radius:15px;margin:7px 3px 5px;gap:10px}.hero .bigHeb{font-size:22px}.hero #todayGreg{font-size:12px;margin-top:4px}.hero .todayInfo{font-size:10px;padding-right:9px;line-height:1.6}}
