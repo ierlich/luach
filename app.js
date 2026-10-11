@@ -65,50 +65,79 @@ function fillSelect(el,items,selected){el.innerHTML=items.map(x=>{let v=Array.is
 function initGoTo(){let n=new Date(),hy=Number(new Intl.DateTimeFormat('en-u-ca-hebrew',{year:'numeric'}).formatToParts(n).find(p=>p.type==='year')?.value)||5787;fillSelect($('#gDay'),Array.from({length:31},(_,i)=>i+1),n.getDate());fillSelect($('#gMonth'),gMonths.map((x,i)=>[i+1,x]),n.getMonth()+1);fillSelect($('#gYear'),Array.from({length:201},(_,i)=>n.getFullYear()-100+i),n.getFullYear());fillSelect($('#hDay'),Array.from({length:30},(_,i)=>i+1),1);fillSelect($('#hMonth'),hMonths,'Tishrei');fillSelect($('#hYear'),Array.from({length:201},(_,i)=>hy-100+i),hy)}
 $('#goToBtn').onclick=()=>{$('#menuDialog').close();initGoTo();$('#goToDialog').showModal()};$('#goCalendar').onchange=()=>{let heb=$('#goCalendar').value==='heb';$('#gregFields').hidden=heb;$('#hebFields').hidden=!heb};
 $('#goSubmit').onclick=async()=>{let d;$('#goStatus').textContent='טוען…';try{if($('#goCalendar').value==='greg'){d=new Date(+$('#gYear').value,+$('#gMonth').value-1,+$('#gDay').value);if(d.getDate()!=+$('#gDay').value)throw Error('invalid')}else{let q=`${H}/converter?cfg=json&h2g=1&hy=${$('#hYear').value}&hm=${encodeURIComponent($('#hMonth').value)}&hd=${$('#hDay').value}`,x=await j(q);d=new Date(x.gy,x.gm-1,x.gd)}selectedDate=iso(d);view=new Date(d.getFullYear(),d.getMonth(),1);$('#goToDialog').close();await load();setTimeout(()=>{let el=document.querySelector(`.day[data-date="${iso(d)}"]`);if(el){el.classList.add('gotoFlash');el.scrollIntoView({block:'center',behavior:'smooth'})}},80)}catch{$('#goStatus').textContent='לא ניתן לעבור לתאריך הזה. בדוק את הבחירה.'}};
-// Experimental two-sheet swipe: both independent calendar grids move together.
-let touchStart=null,swiping=false,animating=false,activeSwipe=null;
+// Experimental swipe: a single controlled pair of sheets, never overlapping generations.
+let touchStart=null,swiping=false,animating=false,activeSwipe=null,swipeFrame=0;
 const calendar=$('.calendar'),swipeViewport=$('.calendarSwipeViewport');
-function createSwipeSheet(horizontal,delta,sign){
+function setSwipeOffset(g,offset){
+ g.offset=offset;
+ const incoming=offset-g.sign*g.distance;
+ calendar.style.transform=g.horizontal?'translate3d('+offset+'px,0,0)':'translate3d(0,'+offset+'px,0)';
+ g.next.style.transform=g.horizontal?'translate3d('+incoming+'px,0,0)':'translate3d(0,'+incoming+'px,0)'
+}
+function cleanSwipe(g){
+ cancelAnimationFrame(swipeFrame);
+ g.next.remove();
+ calendar.classList.remove('swipe-sheet','outgoing-sheet');
+ calendar.style.transform='';
+ calendar.style.transition='';
+ swipeViewport.style.height='';
+}
+function createSwipeSheet(horizontal,sign){
+ // Defensive cleanup prevents old preview sheets from ever accumulating.
+ swipeViewport.querySelectorAll('.incoming-sheet').forEach(el=>el.remove());
+ const delta=horizontal?sign:-sign;
  const target=new Date(view.getFullYear()+(horizontal?delta:0),view.getMonth()+(horizontal?0:delta),1);
- const width=swipeViewport.clientWidth,height=calendar.offsetHeight;
- const distance=horizontal?width:height;
+ const distance=horizontal?swipeViewport.clientWidth:calendar.offsetHeight;
+ if(distance<1)return null;
  const next=calendar.cloneNode(true);
- next.removeAttribute('id');next.className='calendar swipe-sheet incoming-sheet';
- next.classList.add(horizontal?(sign>0?'swipe-seam-right':'swipe-seam-left'):(sign>0?'swipe-seam-bottom':'swipe-seam-top'));
+ next.removeAttribute('id');
+ next.className='calendar swipe-sheet incoming-sheet';
  const grid=next.querySelector('.grid');grid.removeAttribute('id');
  grid.innerHTML=buildMonthGrid(target,readMonth(target.getFullYear(),target.getMonth()+1)||[],[],null);
- swipeViewport.style.height=height+'px';
+ swipeViewport.style.height=calendar.offsetHeight+'px';
  calendar.classList.add('swipe-sheet','outgoing-sheet');
  swipeViewport.appendChild(next);
- const gesture={target,horizontal,sign,distance,next,offset:0};
- setSwipeOffset(gesture,0);
- return gesture
+ const g={target,horizontal,sign,distance,next,offset:0};
+ setSwipeOffset(g,0);
+ fetchMonth(target.getFullYear(),target.getMonth()+1).then(items=>{
+  if(g.next.isConnected)grid.innerHTML=buildMonthGrid(target,items,[],null)
+ }).catch(()=>{});
+ return g
 }
-function setSwipeOffset(gesture,offset){
- const {horizontal,sign,distance,next}=gesture;
- gesture.offset=offset;
- const incoming=offset-sign*distance;
- calendar.style.transform=horizontal?'translate3d('+offset+'px,0,0)':'translate3d(0,'+offset+'px,0)';
- next.style.transform=horizontal?'translate3d('+incoming+'px,0,0)':'translate3d(0,'+incoming+'px,0)'
+function finishSwipe(cancelled=false){
+ const g=activeSwipe;
+ touchStart=null;activeSwipe=null;
+ if(!g)return;
+ animating=true;
+ const accepted=!cancelled&&Math.abs(g.offset)>0;
+ const from=g.offset,to=accepted?g.sign*g.distance:0;
+ const duration=Math.max(150,Math.min(320,Math.abs(to-from)/g.distance*300));
+ const started=performance.now();
+ const tick=now=>{
+  const t=Math.min(1,(now-started)/duration),ease=1-Math.pow(1-t,3);
+  setSwipeOffset(g,from+(to-from)*ease);
+  if(t<1){swipeFrame=requestAnimationFrame(tick);return}
+  if(accepted){view=g.target;selectedInView()}
+  cleanSwipe(g);
+  if(accepted)load().catch(console.error);
+  animating=false;
+  setTimeout(()=>{swiping=false},120);
+ };
+ swipeFrame=requestAnimationFrame(tick)
 }
-function cleanSwipe(gesture){
- gesture.next.remove();
- calendar.classList.remove('swipe-sheet','outgoing-sheet');
- calendar.style.transform='';calendar.style.transition='';
- swipeViewport.style.height=''
-}
-calendar.addEventListener('touchstart',e=>{
+swipeViewport.addEventListener('touchstart',e=>{
  if(e.touches.length!==1||animating)return;
- const t=e.touches[0];touchStart={x:t.clientX,y:t.clientY};swiping=false;activeSwipe=null
+ const t=e.touches[0];
+ touchStart={x:t.clientX,y:t.clientY};
+ swiping=false;activeSwipe=null
 },{passive:true});
-calendar.addEventListener('touchmove',e=>{
+swipeViewport.addEventListener('touchmove',e=>{
  if(!touchStart||e.touches.length!==1||animating)return;
  const t=e.touches[0],dx=t.clientX-touchStart.x,dy=t.clientY-touchStart.y;
  if(!activeSwipe&&Math.hypot(dx,dy)>12){
   const horizontal=Math.abs(dx)>Math.abs(dy),sign=(horizontal?dx:dy)>0?1:-1;
-  const delta=horizontal?sign:-sign;
-  activeSwipe=createSwipeSheet(horizontal,delta,sign);
-  swiping=true
+  activeSwipe=createSwipeSheet(horizontal,sign);
+  swiping=!!activeSwipe
  }
  if(activeSwipe){
   e.preventDefault();
@@ -116,41 +145,8 @@ calendar.addEventListener('touchmove',e=>{
   setSwipeOffset(activeSwipe,activeSwipe.sign*Math.min(activeSwipe.distance,Math.max(0,raw*activeSwipe.sign)))
  }
 },{passive:false});
-function endSwipe(e,cancelled=false){
- if(!touchStart)return;
- const gesture=activeSwipe;touchStart=null;activeSwipe=null;
- if(!gesture)return;
- // Once a deliberate swipe begins, complete it on finger release.
- // A short drag should not leave the two calendar sheets halfway across.
- const accepted=!cancelled&&Math.abs(gesture.offset)>0;
- animating=true;
- const remaining=accepted?gesture.distance-Math.abs(gesture.offset):Math.abs(gesture.offset);
- const duration=Math.max(170,Math.min(320,Math.round(remaining/gesture.distance*300)));
- // Commit the current position before enabling the transition, so Android
- // browsers animate from the exact finger position rather than snapping.
- calendar.style.transition='none';
- gesture.next.style.transition='none';
- setSwipeOffset(gesture,gesture.offset);
- void calendar.offsetWidth;
- calendar.style.transition='transform '+duration+'ms ease-out';
- gesture.next.style.transition='transform '+duration+'ms ease-out';
- requestAnimationFrame(()=>setSwipeOffset(gesture,accepted?gesture.sign*gesture.distance:0));
- setTimeout(()=>{
-  if(accepted){
-   // Commit the target only after the incoming sheet has covered the viewport.
-   view=gesture.target;selectedInView();
-   // Keep the incoming sheet visible while the main grid updates.
-   calendar.style.visibility='hidden';
-   cleanSwipe(gesture);
-   load().catch(console.error);
-   calendar.style.visibility='';
-  }else cleanSwipe(gesture);
-  animating=false;
-  setTimeout(()=>{swiping=false},80)
- },duration+40)
-}
-calendar.addEventListener('touchend',e=>endSwipe(e),{passive:true});
-calendar.addEventListener('touchcancel',e=>endSwipe(e,true),{passive:true});
-calendar.addEventListener('click',e=>{if(swiping||animating){e.preventDefault();e.stopPropagation()}},true);
+swipeViewport.addEventListener('touchend',()=>finishSwipe(),{passive:true});
+swipeViewport.addEventListener('touchcancel',()=>finishSwipe(true),{passive:true});
+swipeViewport.addEventListener('click',e=>{if(swiping||animating){e.preventDefault();e.stopPropagation()}},true);
 
 selectedDate=iso(new Date());if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js');load().catch(console.error);restoreGoogle();
