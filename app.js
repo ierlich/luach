@@ -73,7 +73,7 @@ function makeSwipePreview(horizontal,delta){
  const preview=document.createElement('section');preview.className='calendar swipe-preview';
  preview.innerHTML=calendar.querySelector('.week').outerHTML+'<div class="grid">'+monthGridHtml(target,readMonth(target.getFullYear(),target.getMonth()+1)||[],[],null)+'</div>';
  swipeViewport.appendChild(preview);swipePreview=preview;
- const direction=delta===1?1:-1;
+ const direction=horizontal?(delta===1?1:-1):(delta===1?-1:1);
  const distance=horizontal?swipeViewport.clientWidth:calendar.offsetHeight;
  preview.style.transform=horizontal?'translate3d('+(-direction*distance)+'px,0,0)':'translate3d(0,'+(-direction*distance)+'px,0)';
  preview.style.opacity='1';
