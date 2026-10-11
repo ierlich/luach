@@ -74,6 +74,7 @@ function createSwipeSheet(horizontal,delta,sign){
  const distance=horizontal?width:height;
  const next=calendar.cloneNode(true);
  next.removeAttribute('id');next.className='calendar swipe-sheet incoming-sheet';
+ next.classList.add(horizontal?(sign>0?'swipe-seam-right':'swipe-seam-left'):(sign>0?'swipe-seam-bottom':'swipe-seam-top'));
  const grid=next.querySelector('.grid');grid.removeAttribute('id');
  grid.innerHTML=buildMonthGrid(target,readMonth(target.getFullYear(),target.getMonth()+1)||[],[],null);
  swipeViewport.style.height=height+'px';
