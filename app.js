@@ -120,10 +120,20 @@ function endSwipe(e,cancelled=false){
  if(!touchStart)return;
  const gesture=activeSwipe;touchStart=null;activeSwipe=null;
  if(!gesture)return;
- const accepted=!cancelled&&Math.abs(gesture.offset)>=Math.min(gesture.distance*.24,110);
+ // Once a deliberate swipe begins, complete it on finger release.
+ // A short drag should not leave the two calendar sheets halfway across.
+ const accepted=!cancelled&&Math.abs(gesture.offset)>0;
  animating=true;
- calendar.style.transition='transform 200ms ease-out';
- gesture.next.style.transition='transform 200ms ease-out';
+ const remaining=accepted?gesture.distance-Math.abs(gesture.offset):Math.abs(gesture.offset);
+ const duration=Math.max(170,Math.min(320,Math.round(remaining/gesture.distance*300)));
+ // Commit the current position before enabling the transition, so Android
+ // browsers animate from the exact finger position rather than snapping.
+ calendar.style.transition='none';
+ gesture.next.style.transition='none';
+ setSwipeOffset(gesture,gesture.offset);
+ void calendar.offsetWidth;
+ calendar.style.transition='transform '+duration+'ms ease-out';
+ gesture.next.style.transition='transform '+duration+'ms ease-out';
  requestAnimationFrame(()=>setSwipeOffset(gesture,accepted?gesture.sign*gesture.distance:0));
  setTimeout(()=>{
   if(accepted){
@@ -137,7 +147,7 @@ function endSwipe(e,cancelled=false){
   }else cleanSwipe(gesture);
   animating=false;
   setTimeout(()=>{swiping=false},80)
- },220)
+ },duration+40)
 }
 calendar.addEventListener('touchend',e=>endSwipe(e),{passive:true});
 calendar.addEventListener('touchcancel',e=>endSwipe(e,true),{passive:true});
