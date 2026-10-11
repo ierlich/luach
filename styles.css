@@ -104,3 +104,9 @@ main{max-width:1000px;padding:0 3px 12px}
 @keyframes swipeInUp{0%{transform:translateY(75%);opacity:0}100%{transform:translateY(0);opacity:1}}
 @keyframes swipeInDown{0%{transform:translateY(-90%);opacity:0}100%{transform:translateY(0);opacity:1}}
 .calendar.swipe-in-left,.calendar.swipe-in-right,.calendar.swipe-in-up,.calendar.swipe-in-down{animation-duration:.32s;animation-timing-function:cubic-bezier(.22,.7,.25,1);animation-fill-mode:both}
+
+/* Explicit horizontal entry directions; override legacy swipe keyframes */
+@keyframes calendarEnterFromLeft{from{transform:translate3d(-100%,0,0);opacity:0}to{transform:translate3d(0,0,0);opacity:1}}
+@keyframes calendarEnterFromRight{from{transform:translate3d(100%,0,0);opacity:0}to{transform:translate3d(0,0,0);opacity:1}}
+.calendar.swipe-in-left{animation:calendarEnterFromLeft .32s ease-out both!important}
+.calendar.swipe-in-right{animation:calendarEnterFromRight .32s ease-out both!important}
