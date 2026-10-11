@@ -113,3 +113,9 @@ main{max-width:1000px;padding:0 3px 12px}
 
 /* Clip horizontal slide to calendar only; prevent page-wide movement */
 .calendarSwipeViewport{overflow:hidden;width:100%;min-width:0;border-radius:16px;isolation:isolate}
+
+/* Experimental touch-driven two-sheet carousel. Both sheets occupy separate slots. */
+.calendarSwipeViewport{position:relative;overflow:hidden;isolation:isolate;touch-action:none}
+.calendarSwipeViewport>.calendar.swipe-sheet{position:absolute;top:0;left:0;right:0;width:100%;margin:0;box-sizing:border-box;will-change:transform;animation:none!important;transition:none;backface-visibility:hidden}
+.calendarSwipeViewport>.outgoing-sheet{z-index:1}
+.calendarSwipeViewport>.incoming-sheet{z-index:2;pointer-events:none}
