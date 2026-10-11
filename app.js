@@ -104,24 +104,37 @@ function createSwipeSheet(horizontal,sign){
  }).catch(()=>{});
  return g
 }
-function finishSwipe(cancelled=false){
+function finishSwipe(){
  const g=activeSwipe;
  touchStart=null;activeSwipe=null;
  if(!g)return;
  animating=true;
- const accepted=!cancelled&&Math.abs(g.offset)>0;
- const from=g.offset,to=accepted?g.sign*g.distance:0;
+ // A started swipe ALWAYS completes in its chosen direction, including touchcancel.
+ const from=g.offset,to=g.sign*g.distance;
  const duration=Math.max(150,Math.min(320,Math.abs(to-from)/g.distance*300));
  const started=performance.now();
+ let completed=false;
+ const complete=()=>{
+  if(completed)return;
+  completed=true;
+  clearTimeout(g.finishTimer);
+  cancelAnimationFrame(swipeFrame);
+  view=g.target;
+  selectedInView();
+  cleanSwipe(g);
+  load().catch(console.error);
+  animating=false;
+  setTimeout(()=>{swiping=false},120);
+ };
+ // If requestAnimationFrame is throttled or interrupted, the final state is
+ // still committed and both temporary sheets are removed.
+ g.finishTimer=setTimeout(complete,duration+160);
  const tick=now=>{
+  if(completed)return;
   const t=Math.min(1,(now-started)/duration),ease=1-Math.pow(1-t,3);
   setSwipeOffset(g,from+(to-from)*ease);
   if(t<1){swipeFrame=requestAnimationFrame(tick);return}
-  if(accepted){view=g.target;selectedInView()}
-  cleanSwipe(g);
-  if(accepted)load().catch(console.error);
-  animating=false;
-  setTimeout(()=>{swiping=false},120);
+  complete();
  };
  swipeFrame=requestAnimationFrame(tick)
 }
@@ -145,8 +158,18 @@ swipeViewport.addEventListener('touchmove',e=>{
   setSwipeOffset(activeSwipe,activeSwipe.sign*Math.min(activeSwipe.distance,Math.max(0,raw*activeSwipe.sign)))
  }
 },{passive:false});
-swipeViewport.addEventListener('touchend',()=>finishSwipe(),{passive:true});
-swipeViewport.addEventListener('touchcancel',()=>finishSwipe(true),{passive:true});
+// Capture release even if the finger ends outside the viewport or Android
+// retargets the touch after the incoming calendar sheet is inserted.
+window.addEventListener('touchend',e=>{
+ if(touchStart&&e.touches.length===0)finishSwipe()
+},{capture:true,passive:true});
+window.addEventListener('touchcancel',e=>{
+ if(touchStart&&e.touches.length===0)finishSwipe()
+},{capture:true,passive:true});
+window.addEventListener('blur',()=>{if(activeSwipe)finishSwipe()});
+document.addEventListener('visibilitychange',()=>{
+ if(document.hidden&&activeSwipe)finishSwipe()
+});
 swipeViewport.addEventListener('click',e=>{if(swiping||animating){e.preventDefault();e.stopPropagation()}},true);
 
 selectedDate=iso(new Date());if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js');load().catch(console.error);restoreGoogle();
