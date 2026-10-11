@@ -13,7 +13,8 @@ function selectedInView(){const anchor=selectedDate?new Date(selectedDate+'T12:0
 function evFor(date){return jewish.filter(x=>x.date===date)}
 function hebYear(n){const ones=['','א','ב','ג','ד','ה','ו','ז','ח','ט'],tens=['','','כ','ל','מ','נ','ס','ע','פ','צ'],hundreds=['','ק','ר','ש','ת'];let x=Number(n)%1000,out='';while(x>=400){out+='ת';x-=400}if(x>=100){out+=hundreds[Math.floor(x/100)];x%=100}if(x===15)out+='טו';else if(x===16)out+='טז';else{if(x>=10){out+=tens[Math.floor(x/10)];x%=10}out+=ones[x]||''}return out.length>1?out.slice(0,-1)+'״'+out.slice(-1):out+'׳'}
 const hebNums=['','א׳','ב׳','ג׳','ד׳','ה׳','ו׳','ז׳','ח׳','ט׳','י׳','י״א','י״ב','י״ג','י״ד','ט״ו','ט״ז','י״ז','י״ח','י״ט','כ׳','כ״א','כ״ב','כ״ג','כ״ד','כ״ה','כ״ו','כ״ז','כ״ח','כ״ט','ל׳'];function hebFor(date){let d=new Date(date+'T12:00:00');try{let p=new Intl.DateTimeFormat('en-u-ca-hebrew',{day:'numeric'}).formatToParts(d),day=parseInt(p.find(x=>x.type==='day')?.value,10),month=new Intl.DateTimeFormat('he-IL-u-ca-hebrew',{month:'long'}).format(d).replace(/^ב/,'');return ((hebNums[day]||day)+' '+month).trim()}catch{return ''}}
-function monthHeading(){let y=view.getFullYear(),m=view.getMonth(),mid=new Date(y,m,15),greg=new Intl.DateTimeFormat('he-IL',{month:'long',year:'numeric'}).format(mid),parts=new Intl.DateTimeFormat('he-IL-u-ca-hebrew',{month:'long',year:'numeric'}).formatToParts(mid),hm=parts.find(p=>p.type==='month')?.value||'',hy=parts.find(p=>p.type==='year')?.value||'';return `${greg} · ${hm} ${hebYear(hy)}`}function render(){let y=view.getFullYear(),m=view.getMonth();$('#calendarTitle').textContent=monthHeading();let first=new Date(y,m,1),last=new Date(y,m+1,0),offset=first.getDay(),cells=[];for(let i=-offset;i<42-offset;i++){let d=new Date(y,m,1+i),date=iso(d),ev=evFor(date),h=hebFor(date),holiday=ev.find(e=>['holiday','roshchodesh','fast'].includes(e.category));let cls='day'+(d.getMonth()!=m?' out':'')+(date===iso(new Date())?' today':'')+(selectedDate===date?' selected-date':'');let ges=gEvents.filter(e=>(e.start?.date||e.start?.dateTime||'').startsWith(date)),dayOnly=(h||'').split(' ')[0];cells.push(`<div class="${cls}" data-date="${date}"><div class="gdate">${d.getDate()}</div><div class="hdate">${dayOnly}</div>${holiday?`<div class="holiday">${holiday.hebrew||holiday.title}</div>`:''}${ges.slice(0,2).map(e=>`<div class="googleEvent">${e.summary||'(ללא כותרת)'}</div>`).join('')}${ges.length>2?`<div class="moreEvents">+${ges.length-2}</div>`:''}</div>`)}$('#grid').innerHTML=cells.join('');document.querySelectorAll('.day').forEach(el=>el.onclick=()=>{selectedDate=el.dataset.date;render();loadToday();openDay(el.dataset.date)})}
+function monthHeading(){let y=view.getFullYear(),m=view.getMonth(),mid=new Date(y,m,15),greg=new Intl.DateTimeFormat('he-IL',{month:'long',year:'numeric'}).format(mid),parts=new Intl.DateTimeFormat('he-IL-u-ca-hebrew',{month:'long',year:'numeric'}).formatToParts(mid),hm=parts.find(p=>p.type==='month')?.value||'',hy=parts.find(p=>p.type==='year')?.value||'';return `${greg} · ${hm} ${hebYear(hy)}`}function buildMonthGrid(monthDate,items,events,chosen){let y=monthDate.getFullYear(),m=monthDate.getMonth();let first=new Date(y,m,1),last=new Date(y,m+1,0),offset=first.getDay(),cells=[];for(let i=-offset;i<42-offset;i++){let d=new Date(y,m,1+i),date=iso(d),ev=items.filter(x=>x.date===date),h=hebFor(date),holiday=ev.find(e=>['holiday','roshchodesh','fast'].includes(e.category));let cls='day'+(d.getMonth()!=m?' out':'')+(date===iso(new Date())?' today':'')+(chosen===date?' selected-date':'');let ges=events.filter(e=>(e.start?.date||e.start?.dateTime||'').startsWith(date)),dayOnly=(h||'').split(' ')[0];cells.push(`<div class="${cls}" data-date="${date}"><div class="gdate">${d.getDate()}</div><div class="hdate">${dayOnly}</div>${holiday?`<div class="holiday">${holiday.hebrew||holiday.title}</div>`:''}${ges.slice(0,2).map(e=>`<div class="googleEvent">${e.summary||'(ללא כותרת)'}</div>`).join('')}${ges.length>2?`<div class="moreEvents">+${ges.length-2}</div>`:''}</div>`)}return cells.join('')}
+function render(){$('#calendarTitle').textContent=monthHeading();$('#grid').innerHTML=buildMonthGrid(view,jewish,gEvents,selectedDate);document.querySelectorAll('#grid .day').forEach(el=>el.onclick=()=>{selectedDate=el.dataset.date;render();loadToday();openDay(el.dataset.date)})}
 async function loadToday(){let d=selectedDate?new Date(selectedDate+'T12:00:00'):new Date(),date=iso(d),sat=new Date(d);sat.setDate(d.getDate()+((6-d.getDay()+7)%7));let satDate=iso(sat);try{let [conv,dafCal,weekCal]=await Promise.all([j(`${H}/converter?cfg=json&g2h=1&date=${date}`),j(`${H}/hebcal?v=1&cfg=json&start=${date}&end=${date}&F=on&lg=he`),j(`${H}/hebcal?v=1&cfg=json&start=${date}&end=${satDate}&s=on&maj=on&lg=he`)]);$('#todayHeb').textContent=conv.hebrew;$('#todayGreg').textContent=new Intl.DateTimeFormat('he-IL',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(d);let daf=dafCal.items?.find(x=>x.category==='dafyomi'||/Daf Yomi/i.test(x.title||'')),parasha=weekCal.items?.find(x=>x.category==='parashat');$('#todayLearning').textContent=daf?`דף היומי: ${daf.hebrew||daf.title}`:'דף היומי: —';$('#todayParasha').textContent=parasha?`פרשת השבוע: ${(parasha.hebrew||parasha.title).replace(/^פרשת\\s+/,'').replace(/^Parashat\\s+/i,'')}`:'פרשת השבוע: —'}catch(e){$('#todayLearning').textContent='דף היומי: לא זמין';$('#todayParasha').textContent='פרשת השבוע: לא זמינה'}}
 async function openDay(date){let d=new Date(date+'T12:00:00');let [conv,z,cal]=await Promise.all([j(`${H}/converter?cfg=json&g2h=1&date=${date}`),j(`${H}/zmanim?cfg=json&date=${date}&latitude=${loc.lat}&longitude=${loc.lon}&tzid=${encodeURIComponent(loc.tz)}`),j(`${H}/hebcal?v=1&cfg=json&start=${date}&end=${date}&maj=on&min=on&mod=on&nx=on&mf=on&ss=on&s=on&D=on&d=on&o=on&lg=he`)]);let t=z.times,daf=cal.items?.find(x=>x.category==='dafyomi'),events=cal.items?.filter(x=>x.category!=='dafyomi')||[],ge=gEvents.filter(e=>(e.start?.date||e.start?.dateTime||'').startsWith(date));let rows=[];if(settings.alotMethod==='hebcal'||settings.alotMethod==='both')rows.push(['עלות השחר',t.alotHaShachar]);if(settings.alotMethod==='dawn'||settings.alotMethod==='both')rows.push(['דמדומי בוקר',t.dawn]);rows.push(['משיכיר',t.misheyakir],['זריחה',t.sunrise]);if(settings.shmaMethod==='gra'||settings.shmaMethod==='both')rows.push(['סוף זמן ק״ש גר״א',t.sofZmanShma]);if(settings.shmaMethod==='mga'||settings.shmaMethod==='both')rows.push(['סוף זמן ק״ש מג״א',t.sofZmanShmaMGA]);if(settings.tfillaMethod==='gra'||settings.tfillaMethod==='both')rows.push(['סוף זמן תפילה גר״א',t.sofZmanTfilla]);if(settings.tfillaMethod==='mga'||settings.tfillaMethod==='both')rows.push(['סוף זמן תפילה מג״א',t.sofZmanTfillaMGA]);rows.push(['חצות',t.chatzot],['מנחה גדולה',t.minchaGedola],['מנחה קטנה',t.minchaKetana],['פלג המנחה',t.plagHaMincha],['שקיעה',t.sunset]);if(settings.tzeitMethod==='7083'||settings.tzeitMethod==='both')rows.push(['צאת הכוכבים 7.083°',t.tzeit7083deg]);if(settings.tzeitMethod==='dusk'||settings.tzeitMethod==='both')rows.push(['דמדומי ערב',t.dusk]);$('#dayContent').innerHTML=`<h2>${conv.hebrew}</h2><div>${new Intl.DateTimeFormat('he-IL',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(d)}</div>${daf?`<h3>📖 דף היומי</h3><p>${daf.hebrew||daf.title}</p>`:''}${events.length?`<h3>✡️ בלוח</h3>${events.map(e=>`<p>${e.hebrew||e.title}</p>`).join('')}`:''}${ge.length?`<h3>🗓️ Google Calendar</h3>${ge.map(e=>`<p>${e.summary||'(ללא כותרת)'}</p>`).join('')}`:''}<h3>☀️ זמני היום · ${loc.name}</h3><div class="zmanim">${rows.map(([n,v])=>`<div class="z"><span>${n}</span><strong>${fmtTime(v)}</strong></div>`).join('')}</div>`;$('#dayDialog').showModal()}
 $('#prev').onclick=()=>{view.setMonth(view.getMonth()-1);selectedInView();load()};$('#next').onclick=()=>{view.setMonth(view.getMonth()+1);selectedInView();load()};$('#todayBtn').onclick=()=>{selectedDate=iso(new Date());view=new Date();view.setDate(1);load()};$('#locationBtn').onclick=()=>{$('#menuDialog').close();$('#locationDialog').showModal()};
@@ -64,7 +65,82 @@ function fillSelect(el,items,selected){el.innerHTML=items.map(x=>{let v=Array.is
 function initGoTo(){let n=new Date(),hy=Number(new Intl.DateTimeFormat('en-u-ca-hebrew',{year:'numeric'}).formatToParts(n).find(p=>p.type==='year')?.value)||5787;fillSelect($('#gDay'),Array.from({length:31},(_,i)=>i+1),n.getDate());fillSelect($('#gMonth'),gMonths.map((x,i)=>[i+1,x]),n.getMonth()+1);fillSelect($('#gYear'),Array.from({length:201},(_,i)=>n.getFullYear()-100+i),n.getFullYear());fillSelect($('#hDay'),Array.from({length:30},(_,i)=>i+1),1);fillSelect($('#hMonth'),hMonths,'Tishrei');fillSelect($('#hYear'),Array.from({length:201},(_,i)=>hy-100+i),hy)}
 $('#goToBtn').onclick=()=>{$('#menuDialog').close();initGoTo();$('#goToDialog').showModal()};$('#goCalendar').onchange=()=>{let heb=$('#goCalendar').value==='heb';$('#gregFields').hidden=heb;$('#hebFields').hidden=!heb};
 $('#goSubmit').onclick=async()=>{let d;$('#goStatus').textContent='טוען…';try{if($('#goCalendar').value==='greg'){d=new Date(+$('#gYear').value,+$('#gMonth').value-1,+$('#gDay').value);if(d.getDate()!=+$('#gDay').value)throw Error('invalid')}else{let q=`${H}/converter?cfg=json&h2g=1&hy=${$('#hYear').value}&hm=${encodeURIComponent($('#hMonth').value)}&hd=${$('#hDay').value}`,x=await j(q);d=new Date(x.gy,x.gm-1,x.gd)}selectedDate=iso(d);view=new Date(d.getFullYear(),d.getMonth(),1);$('#goToDialog').close();await load();setTimeout(()=>{let el=document.querySelector(`.day[data-date="${iso(d)}"]`);if(el){el.classList.add('gotoFlash');el.scrollIntoView({block:'center',behavior:'smooth'})}},80)}catch{$('#goStatus').textContent='לא ניתן לעבור לתאריך הזה. בדוק את הבחירה.'}};
-let touchStart=null,swiping=false,animating=false;const calendar=$('.calendar');
-function swipeNavigate(dx,dy){if(animating)return;animating=true;let horizontal=Math.abs(dx)>Math.abs(dy),outClass,inClass;if(horizontal){if(dx>0){view.setFullYear(view.getFullYear()+1);outClass='swipe-out-right';inClass='swipe-in-left'}else{view.setFullYear(view.getFullYear()-1);outClass='swipe-out-left';inClass='swipe-in-right'}}else{if(dy>0){view.setMonth(view.getMonth()-1);outClass='swipe-out-down';inClass='swipe-in-down'}else{view.setMonth(view.getMonth()+1);outClass='swipe-out-up';inClass='swipe-in-up'}}selectedInView();calendar.className='calendar '+outClass;setTimeout(()=>{load();calendar.className='calendar '+inClass;setTimeout(()=>{calendar.className='calendar';animating=false;swiping=false},360)},220)}
-calendar.addEventListener('touchstart',e=>{if(e.touches.length!==1||animating)return;let t=e.touches[0];touchStart={x:t.clientX,y:t.clientY,time:Date.now()};swiping=false},{passive:true});calendar.addEventListener('touchmove',e=>{if(!touchStart||e.touches.length!==1)return;let t=e.touches[0],dx=t.clientX-touchStart.x,dy=t.clientY-touchStart.y;if(Math.hypot(dx,dy)>12){swiping=true;e.preventDefault()}},{passive:false});calendar.addEventListener('touchend',e=>{if(!touchStart)return;let t=e.changedTouches[0],dx=t.clientX-touchStart.x,dy=t.clientY-touchStart.y,elapsed=Date.now()-touchStart.time;touchStart=null;if(elapsed>1200||Math.max(Math.abs(dx),Math.abs(dy))<45){swiping=false;return}swipeNavigate(dx,dy)},{passive:true});calendar.addEventListener('click',e=>{if(swiping||animating){e.preventDefault();e.stopPropagation()}},true);
+// Experimental two-sheet swipe: both independent calendar grids move together.
+let touchStart=null,swiping=false,animating=false,activeSwipe=null;
+const calendar=$('.calendar'),swipeViewport=$('.calendarSwipeViewport');
+function createSwipeSheet(horizontal,delta,sign){
+ const target=new Date(view.getFullYear()+(horizontal?delta:0),view.getMonth()+(horizontal?0:delta),1);
+ const width=swipeViewport.clientWidth,height=calendar.offsetHeight;
+ const distance=horizontal?width:height;
+ const next=calendar.cloneNode(true);
+ next.removeAttribute('id');next.className='calendar swipe-sheet incoming-sheet';
+ next.classList.add(horizontal?(sign>0?'swipe-seam-right':'swipe-seam-left'):(sign>0?'swipe-seam-bottom':'swipe-seam-top'));
+ const grid=next.querySelector('.grid');grid.removeAttribute('id');
+ grid.innerHTML=buildMonthGrid(target,readMonth(target.getFullYear(),target.getMonth()+1)||[],[],null);
+ swipeViewport.style.height=height+'px';
+ calendar.classList.add('swipe-sheet','outgoing-sheet');
+ swipeViewport.appendChild(next);
+ const gesture={target,horizontal,sign,distance,next,offset:0};
+ setSwipeOffset(gesture,0);
+ return gesture
+}
+function setSwipeOffset(gesture,offset){
+ const {horizontal,sign,distance,next}=gesture;
+ gesture.offset=offset;
+ const incoming=offset-sign*distance;
+ calendar.style.transform=horizontal?'translate3d('+offset+'px,0,0)':'translate3d(0,'+offset+'px,0)';
+ next.style.transform=horizontal?'translate3d('+incoming+'px,0,0)':'translate3d(0,'+incoming+'px,0)'
+}
+function cleanSwipe(gesture){
+ gesture.next.remove();
+ calendar.classList.remove('swipe-sheet','outgoing-sheet');
+ calendar.style.transform='';calendar.style.transition='';
+ swipeViewport.style.height=''
+}
+calendar.addEventListener('touchstart',e=>{
+ if(e.touches.length!==1||animating)return;
+ const t=e.touches[0];touchStart={x:t.clientX,y:t.clientY};swiping=false;activeSwipe=null
+},{passive:true});
+calendar.addEventListener('touchmove',e=>{
+ if(!touchStart||e.touches.length!==1||animating)return;
+ const t=e.touches[0],dx=t.clientX-touchStart.x,dy=t.clientY-touchStart.y;
+ if(!activeSwipe&&Math.hypot(dx,dy)>12){
+  const horizontal=Math.abs(dx)>Math.abs(dy),sign=(horizontal?dx:dy)>0?1:-1;
+  const delta=horizontal?sign:-sign;
+  activeSwipe=createSwipeSheet(horizontal,delta,sign);
+  swiping=true
+ }
+ if(activeSwipe){
+  e.preventDefault();
+  const raw=activeSwipe.horizontal?dx:dy;
+  setSwipeOffset(activeSwipe,activeSwipe.sign*Math.min(activeSwipe.distance,Math.max(0,raw*activeSwipe.sign)))
+ }
+},{passive:false});
+function endSwipe(e,cancelled=false){
+ if(!touchStart)return;
+ const gesture=activeSwipe;touchStart=null;activeSwipe=null;
+ if(!gesture)return;
+ const accepted=!cancelled&&Math.abs(gesture.offset)>=Math.min(gesture.distance*.24,110);
+ animating=true;
+ calendar.style.transition='transform 200ms ease-out';
+ gesture.next.style.transition='transform 200ms ease-out';
+ requestAnimationFrame(()=>setSwipeOffset(gesture,accepted?gesture.sign*gesture.distance:0));
+ setTimeout(()=>{
+  if(accepted){
+   // Commit the target only after the incoming sheet has covered the viewport.
+   view=gesture.target;selectedInView();
+   // Keep the incoming sheet visible while the main grid updates.
+   calendar.style.visibility='hidden';
+   cleanSwipe(gesture);
+   load().catch(console.error);
+   calendar.style.visibility='';
+  }else cleanSwipe(gesture);
+  animating=false;
+  setTimeout(()=>{swiping=false},80)
+ },220)
+}
+calendar.addEventListener('touchend',e=>endSwipe(e),{passive:true});
+calendar.addEventListener('touchcancel',e=>endSwipe(e,true),{passive:true});
+calendar.addEventListener('click',e=>{if(swiping||animating){e.preventDefault();e.stopPropagation()}},true);
+
 selectedDate=iso(new Date());if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js');load().catch(console.error);restoreGoogle();

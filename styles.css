@@ -113,3 +113,17 @@ main{max-width:1000px;padding:0 3px 12px}
 
 /* Clip horizontal slide to calendar only; prevent page-wide movement */
 .calendarSwipeViewport{overflow:hidden;width:100%;min-width:0;border-radius:16px;isolation:isolate}
+
+/* Experimental touch-driven two-sheet carousel. Both sheets occupy separate slots. */
+.calendarSwipeViewport{position:relative;overflow:hidden;isolation:isolate;touch-action:none}
+.calendarSwipeViewport>.calendar.swipe-sheet{position:absolute;top:0;left:0;right:0;width:100%;margin:0;box-sizing:border-box;will-change:transform;animation:none!important;transition:none;backface-visibility:hidden}
+.calendarSwipeViewport>.outgoing-sheet{z-index:1}
+.calendarSwipeViewport>.incoming-sheet{z-index:2;pointer-events:none}
+
+/* Draw a real overlay above day cells, not an inset box-shadow hidden by the grid. */
+.calendarSwipeViewport>.incoming-sheet{background:#fff;outline:1px solid #d2e0ef;outline-offset:-1px;position:absolute}
+.calendarSwipeViewport>.incoming-sheet::after{content:"";position:absolute;z-index:100;pointer-events:none;background:#163c67;box-shadow:0 0 12px 3px #163c6780}
+.calendarSwipeViewport>.incoming-sheet.swipe-seam-right::after{right:0;top:0;bottom:0;width:14px}
+.calendarSwipeViewport>.incoming-sheet.swipe-seam-left::after{left:0;top:0;bottom:0;width:14px}
+.calendarSwipeViewport>.incoming-sheet.swipe-seam-top::after{top:0;left:0;right:0;height:14px}
+.calendarSwipeViewport>.incoming-sheet.swipe-seam-bottom::after{bottom:0;left:0;right:0;height:14px}
