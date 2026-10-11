@@ -96,3 +96,11 @@ main{max-width:1000px;padding:0 3px 12px}
 #useCurrentLocation{margin-top:10px;margin-bottom:8px}
 #useCurrentLocation:disabled{opacity:.65}
 @media(max-width:560px){.navRow{grid-template-columns:40px minmax(0,1fr) 40px;gap:4px}.navRow .monthNav{width:40px;height:36px}.navRow .navSide{gap:7px}#todayBtn{min-width:100px;height:36px;padding:0 13px}#menuBtn{height:36px;padding:0 10px}}
+
+
+/* Directional swipe: no backward overshoot when moving forward */
+@keyframes swipeInLeft{0%{transform:translateX(-75%);opacity:0}100%{transform:translateX(0);opacity:1}}
+@keyframes swipeInRight{0%{transform:translateX(75%);opacity:0}100%{transform:translateX(0);opacity:1}}
+@keyframes swipeInUp{0%{transform:translateY(75%);opacity:0}100%{transform:translateY(0);opacity:1}}
+@keyframes swipeInDown{0%{transform:translateY(-90%);opacity:0}100%{transform:translateY(0);opacity:1}}
+.calendar.swipe-in-left,.calendar.swipe-in-right,.calendar.swipe-in-up,.calendar.swipe-in-down{animation-duration:.32s;animation-timing-function:cubic-bezier(.22,.7,.25,1);animation-fill-mode:both}
