@@ -119,3 +119,9 @@ main{max-width:1000px;padding:0 3px 12px}
 .calendarSwipeViewport>.calendar.swipe-sheet{position:absolute;top:0;left:0;right:0;width:100%;margin:0;box-sizing:border-box;will-change:transform;animation:none!important;transition:none;backface-visibility:hidden}
 .calendarSwipeViewport>.outgoing-sheet{z-index:1}
 .calendarSwipeViewport>.incoming-sheet{z-index:2;pointer-events:none}
+
+/* Visible page boundary during interactive month/year dragging. */
+.calendarSwipeViewport>.incoming-sheet.swipe-seam-right{box-shadow:inset -5px 0 0 #3a78b6,-3px 0 10px #153d6680}
+.calendarSwipeViewport>.incoming-sheet.swipe-seam-left{box-shadow:inset 5px 0 0 #3a78b6,3px 0 10px #153d6680}
+.calendarSwipeViewport>.incoming-sheet.swipe-seam-top{box-shadow:inset 0 5px 0 #3a78b6,0 3px 10px #153d6680}
+.calendarSwipeViewport>.incoming-sheet.swipe-seam-bottom{box-shadow:inset 0 -5px 0 #3a78b6,0 -3px 10px #153d6680}
