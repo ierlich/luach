@@ -120,10 +120,7 @@ main{max-width:1000px;padding:0 3px 12px}
 .calendarSwipeViewport>.outgoing-sheet{z-index:1}
 .calendarSwipeViewport>.incoming-sheet{z-index:2;pointer-events:none}
 
-/* Draw a real overlay above day cells, not an inset box-shadow hidden by the grid. */
-.calendarSwipeViewport>.incoming-sheet{background:#fff;outline:1px solid #d2e0ef;outline-offset:-1px;position:absolute}
-.calendarSwipeViewport>.incoming-sheet::after{content:"";position:absolute;z-index:100;pointer-events:none;background:#163c67;box-shadow:0 0 12px 3px #163c6780}
-.calendarSwipeViewport>.incoming-sheet.swipe-seam-right::after{right:0;top:0;bottom:0;width:14px}
-.calendarSwipeViewport>.incoming-sheet.swipe-seam-left::after{left:0;top:0;bottom:0;width:14px}
-.calendarSwipeViewport>.incoming-sheet.swipe-seam-top::after{top:0;left:0;right:0;height:14px}
-.calendarSwipeViewport>.incoming-sheet.swipe-seam-bottom::after{bottom:0;left:0;right:0;height:14px}
+
+/* The two calendar sheets are separated by their positions; no heavy seam overlays. */
+.calendarSwipeViewport>.incoming-sheet{background:#fff;pointer-events:none}
+.calendarSwipeViewport>.incoming-sheet::after{content:none!important}
