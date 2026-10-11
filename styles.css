@@ -113,3 +113,8 @@ main{max-width:1000px;padding:0 3px 12px}
 
 /* Clip horizontal slide to calendar only; prevent page-wide movement */
 .calendarSwipeViewport{overflow:hidden;width:100%;min-width:0;border-radius:16px;isolation:isolate}
+
+/* Interactive swipe: keep both calendar sheets inside the table viewport */
+.calendarSwipeViewport{position:relative;overflow:hidden;touch-action:none}
+.calendarSwipeViewport>.calendar{position:relative;z-index:1;will-change:transform}
+.calendarSwipeViewport>.swipe-preview{position:absolute;inset:0 0 auto 0;width:100%;z-index:2;pointer-events:none;will-change:transform;margin:0}
