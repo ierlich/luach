@@ -120,9 +120,9 @@ main{max-width:1000px;padding:0 3px 12px}
 .calendarSwipeViewport>.outgoing-sheet{z-index:1}
 .calendarSwipeViewport>.incoming-sheet{z-index:2;pointer-events:none}
 
-/* Strong, clearly visible seam between adjacent calendar sheets while dragging. */
+/* Seam uses the exact deep-blue (#163c67) of the right edge of the top date banner. */
 .calendarSwipeViewport>.incoming-sheet{background:#fff;outline:1px solid #d2e0ef;outline-offset:-1px}
-.calendarSwipeViewport>.incoming-sheet.swipe-seam-right{box-shadow:inset -9px 0 0 #1d5d9a,-5px 0 16px 2px #092d5880}
-.calendarSwipeViewport>.incoming-sheet.swipe-seam-left{box-shadow:inset 9px 0 0 #1d5d9a,5px 0 16px 2px #092d5880}
-.calendarSwipeViewport>.incoming-sheet.swipe-seam-top{box-shadow:inset 0 9px 0 #1d5d9a,0 5px 16px 2px #092d5880}
-.calendarSwipeViewport>.incoming-sheet.swipe-seam-bottom{box-shadow:inset 0 -9px 0 #1d5d9a,0 -5px 16px 2px #092d5880}
+.calendarSwipeViewport>.incoming-sheet.swipe-seam-right{box-shadow:inset -14px 0 0 #163c67,-7px 0 19px 3px #163c6799}
+.calendarSwipeViewport>.incoming-sheet.swipe-seam-left{box-shadow:inset 14px 0 0 #163c67,7px 0 19px 3px #163c6799}
+.calendarSwipeViewport>.incoming-sheet.swipe-seam-top{box-shadow:inset 0 14px 0 #163c67,0 7px 19px 3px #163c6799}
+.calendarSwipeViewport>.incoming-sheet.swipe-seam-bottom{box-shadow:inset 0 -14px 0 #163c67,0 -7px 19px 3px #163c6799}
