@@ -110,3 +110,6 @@ main{max-width:1000px;padding:0 3px 12px}
 @keyframes calendarEnterFromRight{from{transform:translate3d(100%,0,0);opacity:0}to{transform:translate3d(0,0,0);opacity:1}}
 .calendar.swipe-in-left{animation:calendarEnterFromLeft .32s ease-out both!important}
 .calendar.swipe-in-right{animation:calendarEnterFromRight .32s ease-out both!important}
+
+/* Clip horizontal slide to calendar only; prevent page-wide movement */
+.calendarSwipeViewport{overflow:hidden;width:100%;min-width:0;border-radius:16px;isolation:isolate}
