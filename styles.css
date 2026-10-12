@@ -126,5 +126,5 @@ main{max-width:1000px;padding:0 3px 12px}
 .calendarSwipeViewport>.incoming-sheet::after{content:none!important}
 
 /* Friday candle lighting and Saturday nightfall in the date banner */
-.todayShabbatTime{margin-top:5px;font-size:13px;font-weight:700;line-height:1.4;color:#385b53}
+.hero .todayShabbatTime{margin-top:6px;font-size:14px;font-weight:800;line-height:1.45;color:#fff;text-shadow:0 1px 2px #102f59aa}
 .todayShabbatTime[hidden]{display:none}
