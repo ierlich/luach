@@ -124,3 +124,7 @@ main{max-width:1000px;padding:0 3px 12px}
 /* The two calendar sheets are separated by their positions; no heavy seam overlays. */
 .calendarSwipeViewport>.incoming-sheet{background:#fff;pointer-events:none}
 .calendarSwipeViewport>.incoming-sheet::after{content:none!important}
+
+/* Friday candle lighting and Saturday nightfall in the date banner */
+.todayShabbatTime{margin-top:5px;font-size:13px;font-weight:700;line-height:1.4;color:#385b53}
+.todayShabbatTime[hidden]{display:none}
