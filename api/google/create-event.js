@@ -10,7 +10,7 @@ export default async function handler(req,res){
  if(!m)return res.status(401).json({error:'Connect Google Calendar first'});
  let refresh;try{refresh=await openSession(m[1])}catch{return res.status(401).json({error:'Session expired'})}
  const {title,date,allDay,start,end,description,timeZone}=req.body||{};
- if(typeof title!=='string'||!title.trim()||title.length>200||typeof date!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(date)||new Date(date+'T12:00:00Z').toISOString().slice(0,10)!==date)return res.status(400).json({error:'Invalid title or date'});
+ if(typeof title!=='string'||!title.trim()||title.length>200||typeof date!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(date)||!Number.isFinite(Date.parse(date+'T12:00:00Z'))||new Date(date+'T12:00:00Z').toISOString().slice(0,10)!==date)return res.status(400).json({error:'Invalid title or date'});
  if(typeof description!=='string'||description.length>5000||typeof timeZone!=='string'||timeZone.length>100)return res.status(400).json({error:'Invalid details'});
  try{new Intl.DateTimeFormat('en',{timeZone})}catch{return res.status(400).json({error:'Invalid time zone'})}
  if(!allDay&&(!/^([01]\d|2[0-3]):[0-5]\d$/.test(start)||!/^([01]\d|2[0-3]):[0-5]\d$/.test(end)||end<=start))return res.status(400).json({error:'Invalid event hours'});
