@@ -128,3 +128,6 @@ main{max-width:1000px;padding:0 3px 12px}
 /* Friday candle lighting and Saturday nightfall in the date banner */
 .hero .todayShabbatTime{margin-top:6px;font-size:14px;font-weight:800;line-height:1.45;color:#fff;text-shadow:0 1px 2px #102f59aa}
 .todayShabbatTime[hidden]{display:none}
+
+/* Google event creation dialog */
+#newEventDialog textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:10px;font:inherit;resize:vertical}#newEventDialog .eventCheck{display:flex;align-items:center;gap:9px}#newEventDialog .eventCheck input{width:auto;margin:0}#newEventDialog #eventHours:not([hidden]){display:grid;grid-template-columns:1fr 1fr;gap:10px}#newEventDialog #eventHours[hidden]{display:none}#eventStatus{font-size:13px;font-weight:700}#eventSave:disabled{opacity:.6}
